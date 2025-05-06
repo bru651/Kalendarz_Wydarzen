@@ -20,6 +20,7 @@ import java.time.LocalDate
 import com.example.kalendarzwydarze.data.EventViewModel
 import com.example.kalendarzwydarze.data.Event
 import com.example.kalendarzwydarze.data.GoalViewModel
+import com.example.kalendarzwydarze.data.Goal
 
 // Lista wydarzeń
 @Composable
@@ -32,7 +33,22 @@ fun EG(navController: NavHostController, viewModel: GoalViewModel = viewModel())
         "August", "September", "October", "November", "December"
     )
     // Sort events
-    val events = viewModel.goalList.sortedWith(compareBy({ it.month < cmonth || (it.month == cmonth && it.day < cday) }, { it.month }, { it.day }))
+    //val events = viewModel.goalList.sortedWith(compareBy({ it.month < cmonth || (it.month == cmonth && it.day < cday) }, { it.month }, { it.day }))
+
+    val events = viewModel.goalList.sortedWith(
+        compareBy<Goal>(
+            { it.month == null || it.day == null }, // (1) No-deadline goals last (true == 1, false == 0)
+            {
+                // (2) "Distance" from current date: 0 = future this year, 1 = past (wrap to next year)
+                if (it.month != null && it.day != null &&
+                    (it.month!! < cmonth || (it.month == cmonth && it.day!! < cday))
+                ) 1 else 0
+            },
+            { it.month ?: 13 }, // (3) Sort by month
+            { it.day ?: 32 }    // (4) Sort by day
+        )
+    )
+
 
     Column(
         modifier = Modifier
@@ -73,17 +89,15 @@ fun EG(navController: NavHostController, viewModel: GoalViewModel = viewModel())
                         fontSize = 26.sp
                     )
                     Text(
-                        text = monthNames[events[index].month-1] + " " +events[index].day,
+                        text = if (events[index].month != null && events[index].day != null)
+                            "${monthNames[events[index].month!! - 1]} ${events[index].day}"
+                        else
+                            "No deadline",
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(8.dp)
                     )
-                    /*Text(
-                        text = "Day ${events[index].day}",
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(8.dp)
-                    )*/
+
                 }
             }
         }

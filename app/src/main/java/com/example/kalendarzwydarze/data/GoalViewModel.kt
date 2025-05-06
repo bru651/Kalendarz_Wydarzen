@@ -13,9 +13,9 @@ data class SubGoal(
 
 data class Goal(
     var content: String,
-    var month: Int,
-    var day: Int,
-    val subGoals: MutableList<SubGoal> = mutableListOf(),
+    var day: Int? = null,
+    var month: Int? = null,
+    var subGoals: List<SubGoal> = mutableListOf(),
     val id: Int = Random.nextInt()
 )
 
