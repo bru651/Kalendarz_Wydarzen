@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Pass the eventViewModel to the navigation function
-                    Navigation(eventViewModel = viewModel())
+                    Navigation(eventViewModel = viewModel(),goalViewModel = viewModel())
                 }
             }
         }

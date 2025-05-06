@@ -1,6 +1,7 @@
 package com.example.kalendarzwydarze.ui.theme
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Send
@@ -23,6 +24,12 @@ sealed class BottomElement (
         route = "r2",
         title = "Events",
         icon = Icons.Default.Star
+    )
+
+    object EG : BottomElement(
+        route = "r3",
+        title = "Goals",
+        icon = Icons.Default.Build
     )
 
 }

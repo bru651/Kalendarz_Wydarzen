@@ -29,7 +29,7 @@ class EventViewModel : ViewModel() {
         _eventList.add(Event("International Women's Day", 3, 8))
 
         // Easter Sunday (date may vary)
-        _eventList.add(Event("Easter Sunday", 4, 17)) // Adjust the date as needed
+        _eventList.add(Event("Easter Sunday", 4, 19)) // Adjust the date as needed
 
         // Labor Day (May 1st)
         _eventList.add(Event("Labor Day", 5, 1))
@@ -51,12 +51,6 @@ class EventViewModel : ViewModel() {
 
         // International Men's Day
         _eventList.add(Event("International Men's Day", 11, 19))
-
-        // Thanksgiving (fourth Thursday in November, US)
-        _eventList.add(Event("Thanksgiving", 11, 24)) // Adjust the date as needed
-
-        // Hanukkah (date may vary)
-        _eventList.add(Event("Hanukkah", 12, 18)) // Adjust the date as needed
 
         // Kwanzaa (December 26th to January 1st)
         _eventList.add(Event("Kwanzaa", 12, 26))

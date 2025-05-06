@@ -6,14 +6,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.kalendarzwydarze.ui.theme.screens.E1
 import com.example.kalendarzwydarze.ui.theme.screens.E2
+import com.example.kalendarzwydarze.ui.theme.screens.EG
 import com.example.kalendarzwydarze.ui.theme.screens.E3
 import com.example.kalendarzwydarze.ui.theme.screens.E4
 import com.example.kalendarzwydarze.data.EventViewModel
+import com.example.kalendarzwydarze.data.GoalViewModel
 import com.example.kalendarzwydarze.ui.theme.screens.AddEventScreen
+import com.example.kalendarzwydarze.ui.theme.screens.AddGoalScreen
 import com.example.kalendarzwydarze.ui.theme.screens.EditEventScreen
+import com.example.kalendarzwydarze.ui.theme.screens.EditGoalScreen
 
 @Composable
-fun BottomNavigation(navController: NavHostController, eventViewModel: EventViewModel)
+fun BottomNavigation(navController: NavHostController, eventViewModel: EventViewModel, goalViewModel: GoalViewModel)
 {
     NavHost(navController = navController, startDestination = BottomElement.E1.route )
     {
@@ -25,12 +29,23 @@ fun BottomNavigation(navController: NavHostController, eventViewModel: EventView
         {
             E2(navController = navController,viewModel = eventViewModel)// Lista wydarzeń
         }
-        composable("addEvent") { // New route for adding events
+        composable(route= BottomElement.EG.route)
+        {
+            EG(navController = navController,viewModel = goalViewModel)// Lista wydarzeń
+        }
+        composable("addEvent") { // Route for adding events
             AddEventScreen(navController = navController, viewModel = eventViewModel) // Pass the ViewModel
         }
         composable("EditEvent/{eventId}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")?.toInt() ?: return@composable
             EditEventScreen(navController, eventViewModel, eventId)
+        }
+        composable("addGoal") { // Route for adding goals
+            AddGoalScreen(navController = navController, viewModel = goalViewModel) // Pass the ViewModel
+        }
+        composable("EditGoal/{eventId}") { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId")?.toInt() ?: return@composable
+            EditGoalScreen(navController, goalViewModel, eventId)
         }
         composable("E3/{index}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")

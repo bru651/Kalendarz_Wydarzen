@@ -21,23 +21,24 @@ import androidx.compose.material3.Text
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.example.kalendarzwydarze.data.EventViewModel
+import com.example.kalendarzwydarze.data.GoalViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Navigation(eventViewModel: EventViewModel) {
+fun Navigation(eventViewModel: EventViewModel, goalViewModel: GoalViewModel) {
     val navController = rememberNavController()
     Scaffold (
         bottomBar = { BottomBar(navController = navController)}
     ){
-        BottomNavigation(navController = navController, eventViewModel = eventViewModel)
+        BottomNavigation(navController = navController, eventViewModel = eventViewModel, goalViewModel = goalViewModel)
     }
 }
 @Composable
 fun BottomBar(navController: NavHostController)
 {
-    val screens = listOf(BottomElement.E1, BottomElement.E2)
+    val screens = listOf(BottomElement.E1, BottomElement.E2, BottomElement.EG)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 

@@ -19,10 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDate
 import com.example.kalendarzwydarze.data.EventViewModel
 import com.example.kalendarzwydarze.data.Event
+import com.example.kalendarzwydarze.data.GoalViewModel
 
 // Lista wydarzeń
 @Composable
-fun E2(navController: NavHostController, viewModel: EventViewModel = viewModel()) {
+fun EG(navController: NavHostController, viewModel: GoalViewModel = viewModel()) {
     val currentDate = LocalDate.now()
     val cday = currentDate.dayOfMonth
     val cmonth = currentDate.monthValue
@@ -31,7 +32,7 @@ fun E2(navController: NavHostController, viewModel: EventViewModel = viewModel()
         "August", "September", "October", "November", "December"
     )
     // Sort events
-    val events = viewModel.eventList.sortedWith(compareBy({ it.month < cmonth || (it.month == cmonth && it.day < cday) }, { it.month }, { it.day }))
+    val events = viewModel.goalList.sortedWith(compareBy({ it.month < cmonth || (it.month == cmonth && it.day < cday) }, { it.month }, { it.day }))
 
     Column(
         modifier = Modifier
@@ -39,19 +40,19 @@ fun E2(navController: NavHostController, viewModel: EventViewModel = viewModel()
             .padding(10.dp)
     ) {
         Text(
-            text = "Events",
+            text = "Goals",
             modifier = Modifier.padding(10.dp).align(Alignment.CenterHorizontally),
             fontSize = 26.sp
         )
         Button(
             onClick = {
-                navController.navigate("addEvent")
+                navController.navigate("addGoal")
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 16.dp) // Adds padding below the button
         ) {
-            Text(text = "Add New Event")
+            Text(text = "Add New Goal")
         }
         // Display events
         LazyColumn(modifier = Modifier.fillMaxWidth().height(600.dp)) {
@@ -62,7 +63,7 @@ fun E2(navController: NavHostController, viewModel: EventViewModel = viewModel()
                         .fillMaxWidth()
                         .background(Color.Yellow)
                         .height(80.dp)
-                        .clickable { navController.navigate("EditEvent/${events[index].id}") }
+                        .clickable { navController.navigate("EditGoal/${events[index].id}") }
                 ) {
                     Text(
                         text = events[index].content,
