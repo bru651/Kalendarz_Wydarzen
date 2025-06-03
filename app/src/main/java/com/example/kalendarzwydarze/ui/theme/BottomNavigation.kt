@@ -11,13 +11,18 @@ import com.example.kalendarzwydarze.ui.theme.screens.E3
 import com.example.kalendarzwydarze.ui.theme.screens.E4
 import com.example.kalendarzwydarze.data.EventViewModel
 import com.example.kalendarzwydarze.data.GoalViewModel
+import com.example.kalendarzwydarze.data.GoalViewModelR
 import com.example.kalendarzwydarze.ui.theme.screens.AddEventScreen
 import com.example.kalendarzwydarze.ui.theme.screens.AddGoalScreen
+import com.example.kalendarzwydarze.ui.theme.screens.AddGoalScreenR
+import com.example.kalendarzwydarze.ui.theme.screens.EGR
+//import com.example.kalendarzwydarze.ui.theme.screens.EGR
 import com.example.kalendarzwydarze.ui.theme.screens.EditEventScreen
 import com.example.kalendarzwydarze.ui.theme.screens.EditGoalScreen
+import com.example.kalendarzwydarze.ui.theme.screens.EditGoalScreenR
 
 @Composable
-fun BottomNavigation(navController: NavHostController, eventViewModel: EventViewModel, goalViewModel: GoalViewModel)
+fun BottomNavigation(navController: NavHostController, eventViewModel: EventViewModel, goalViewModel: GoalViewModel, goalViewModelR: GoalViewModelR)
 {
     NavHost(navController = navController, startDestination = BottomElement.E1.route )
     {
@@ -31,7 +36,8 @@ fun BottomNavigation(navController: NavHostController, eventViewModel: EventView
         }
         composable(route= BottomElement.EG.route)
         {
-            EG(navController = navController,viewModel = goalViewModel)// Lista wydarzeń
+            //EG(navController = navController,viewModel = goalViewModel)// Lista wydarzeń
+            EGR(navController = navController,viewModel = goalViewModelR)// Lista celów
         }
         composable("addEvent") { // Route for adding events
             AddEventScreen(navController = navController, viewModel = eventViewModel) // Pass the ViewModel
@@ -41,12 +47,20 @@ fun BottomNavigation(navController: NavHostController, eventViewModel: EventView
             EditEventScreen(navController, eventViewModel, eventId)
         }
         composable("addGoal") { // Route for adding goals
-            AddGoalScreen(navController = navController, viewModel = goalViewModel) // Pass the ViewModel
+            //AddGoalScreen(navController = navController, viewModel = goalViewModel) // Pass the ViewModel
+            AddGoalScreenR(navController = navController, viewModel = goalViewModelR) // Pass the ViewModel
         }
         composable("EditGoal/{eventId}") { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId")?.toInt() ?: return@composable
             EditGoalScreen(navController, goalViewModel, eventId)
         }
+        composable("editGoalR") {
+            val selectedGoal = goalViewModelR.selectedGoalWithSubGoals
+            if (selectedGoal != null) {
+                EditGoalScreenR(navController, goalViewModelR, selectedGoal)
+            }
+        }
+
         composable("E3/{index}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")
             if (index != null) {
