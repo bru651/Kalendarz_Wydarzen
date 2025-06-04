@@ -72,10 +72,12 @@ interface GoalDao {
 
 // ——— Database ———
 
-@Database(entities = [GoalR::class, SubGoalR::class], version = 3)
+@Database(entities = [GoalR::class, SubGoalR::class, EventR::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun goalDao(): GoalDao
+    abstract fun eventDao(): EventDao
 }
+
 
 // ——— Repository ———
 

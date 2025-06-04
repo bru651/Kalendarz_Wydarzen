@@ -13,11 +13,8 @@ import androidx.compose.ui.Modifier
 import com.example.kalendarzwydarze.ui.theme.KalendarzWydarzeńTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
-import com.example.kalendarzwydarze.data.AppDatabase
-import com.example.kalendarzwydarze.data.EventViewModel
-import com.example.kalendarzwydarze.data.GoalRepository
-import com.example.kalendarzwydarze.data.GoalViewModelFactory
-import com.example.kalendarzwydarze.data.GoalViewModelR
+import com.example.kalendarzwydarze.data.*
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,18 +26,30 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val db = MyApp.database
-                    val repository = GoalRepository(db.goalDao())
+
+                    // ViewModel for goals
+                    val goalRepository = GoalRepository(db.goalDao())
                     val goalViewModelR: GoalViewModelR = viewModel(
-                        factory = GoalViewModelFactory(repository)
+                        factory = GoalViewModelFactory(goalRepository)
                     )
 
-                    // Pass the eventViewModel to the navigation function
-                    Navigation(eventViewModel = viewModel(),goalViewModel = viewModel(), goalViewModelR = goalViewModelR)
+                    // ViewModel for events
+                    val eventRepository = EventRepository(db.eventDao())
+                    val eventViewModelR: EventViewModelR = viewModel(
+                        factory = EventViewModelFactory(eventRepository)
+                    )
+
+                    Navigation(
+                        eventViewModel = viewModel(),
+                        eventViewModelR = eventViewModelR,
+                        goalViewModelR = goalViewModelR
+                    )
                 }
             }
         }
     }
 }
+
 
 class MyApp : Application() {
     companion object {
@@ -59,4 +68,5 @@ class MyApp : Application() {
             .build()
     }
 }
+
 

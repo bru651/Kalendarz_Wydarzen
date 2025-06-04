@@ -1,4 +1,4 @@
-// EG.kt
+
 package com.example.kalendarzwydarze.ui.theme.screens
 
 import androidx.compose.foundation.background

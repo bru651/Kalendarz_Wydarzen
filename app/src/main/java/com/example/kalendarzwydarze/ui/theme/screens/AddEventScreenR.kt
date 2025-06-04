@@ -9,28 +9,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.example.kalendarzwydarze.data.Event
-import com.example.kalendarzwydarze.data.EventViewModel
+import com.example.kalendarzwydarze.data.EventViewModelR
+import com.example.kalendarzwydarze.data.EventR
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEventScreen(navController: NavHostController, viewModel: EventViewModel) {
+fun AddEventScreenR(navController: NavHostController, viewModel: EventViewModelR) {
     val monthNames = listOf(
         "January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"
     )
 
+    val currentYear = LocalDate.now().year
     var selectedMonthIndex by remember { mutableStateOf(0) }
     var day by remember { mutableStateOf(1) }
     var content by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
-    // Calculate max days for the selected month (leap year check for February)
-    val currentYear = java.time.LocalDate.now().year
-    val daysInMonth = if (selectedMonthIndex == 1 && // February
-        currentYear % 4 == 0 && (currentYear % 100 != 0 || currentYear % 400 == 0)
-    ) 29 else listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[selectedMonthIndex]
+    val daysInMonth = if (selectedMonthIndex == 1 && currentYear % 4 == 0 &&
+        (currentYear % 100 != 0 || currentYear % 400 == 0)) 29
+    else listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[selectedMonthIndex]
 
     Column(
         modifier = Modifier
@@ -38,125 +40,18 @@ fun AddEventScreen(navController: NavHostController, viewModel: EventViewModel) 
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text("Add Event", fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
 
-        // Dropdown for selecting month
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             TextField(
                 readOnly = true,
                 value = monthNames[selectedMonthIndex],
                 onValueChange = {},
                 label = { Text("Month") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 modifier = Modifier.menuAnchor().fillMaxWidth()
             )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                monthNames.forEachIndexed { index, name ->
-                    DropdownMenuItem(
-                        text = { Text(name) },
-                        onClick = {
-                            selectedMonthIndex = index
-                            if (day > daysInMonth) day = daysInMonth // clamp day if needed
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(12.dp))
-
-        // Numeric input for day
-        TextField(
-            value = day.toString(),
-            onValueChange = {
-                val value = it.toIntOrNull()
-                if (value != null && value in 1..daysInMonth) {
-                    day = value
-                }
-            },
-            label = { Text("Day (1–$daysInMonth)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        // Event content
-        TextField(
-            value = content,
-            onValueChange = { content = it },
-            label = { Text("Event Content") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(onClick = {
-            viewModel.addEvent(Event(content = content, month = selectedMonthIndex + 1, day = day))
-            navController.popBackStack()
-        }) {
-            Text("Save")
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditEventScreen(
-    navController: NavHostController,
-    viewModel: EventViewModel,
-    eventId: Int // Pass this via nav arguments
-) {
-    val event = viewModel.eventList.find { it.id == eventId } ?: return
-    val monthNames = listOf(
-        "January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"
-    )
-
-    var selectedMonthIndex by remember { mutableStateOf(event.month - 1) }
-    var day by remember { mutableStateOf(event.day) }
-    var content by remember { mutableStateOf(event.content) }
-    var expanded by remember { mutableStateOf(false) }
-
-    val currentYear = java.time.LocalDate.now().year
-    val daysInMonth = if (selectedMonthIndex == 1 &&
-        currentYear % 4 == 0 && (currentYear % 100 != 0 || currentYear % 400 == 0)
-    ) 29 else listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[selectedMonthIndex]
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Edit Event", fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
-
-        // [Dropdown, Day Input, Content Field – same as AddEventScreen]
-
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            TextField(
-                readOnly = true,
-                value = monthNames[selectedMonthIndex],
-                onValueChange = {},
-                label = { Text("Month") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 monthNames.forEachIndexed { index, name ->
                     DropdownMenuItem(
                         text = { Text(name) },
@@ -175,9 +70,9 @@ fun EditEventScreen(
         TextField(
             value = day.toString(),
             onValueChange = {
-                val value = it.toIntOrNull()
-                if (value != null && value in 1..daysInMonth) {
-                    day = value
+                val num = it.toIntOrNull()
+                if (num != null && num in 1..daysInMonth) {
+                    day = num
                 }
             },
             label = { Text("Day (1–$daysInMonth)") },
@@ -197,25 +92,125 @@ fun EditEventScreen(
         Spacer(Modifier.height(24.dp))
 
         Button(onClick = {
-            viewModel.updateEvent(
-                event.copy(
-                    content = content,
-                    month = selectedMonthIndex + 1,
-                    day = day
-                )
+            val event = EventR(
+                content = content,
+                month = selectedMonthIndex + 1,
+                day = day
             )
-            navController.popBackStack()
-        }) {
-            Text("Save Changes")
-        }
-        Button(
-            onClick = {
-                viewModel.deleteEvent(eventId)
+            viewModel.viewModelScope.launch {
+                viewModel.addEvent(event)
                 navController.popBackStack()
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-        ) {
-            Text("Delete")
+            }
+        }) {
+            Text("Save Event")
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditEventScreenR(navController: NavHostController, viewModel: EventViewModelR) {
+    val event = viewModel.selectedEvent ?: return
+
+    val monthNames = listOf(
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"
+    )
+
+    val currentYear = LocalDate.now().year
+    var selectedMonthIndex by remember { mutableStateOf(event.month - 1) }
+    var day by remember { mutableStateOf(event.day) }
+    var content by remember { mutableStateOf(event.content) }
+    var expanded by remember { mutableStateOf(false) }
+
+    val daysInMonth = if (selectedMonthIndex == 1 && currentYear % 4 == 0 &&
+        (currentYear % 100 != 0 || currentYear % 400 == 0)) 29
+    else listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[selectedMonthIndex]
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Edit Event", fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
+
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            TextField(
+                readOnly = true,
+                value = monthNames[selectedMonthIndex],
+                onValueChange = {},
+                label = { Text("Month") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                monthNames.forEachIndexed { index, name ->
+                    DropdownMenuItem(
+                        text = { Text(name) },
+                        onClick = {
+                            selectedMonthIndex = index
+                            if (day > daysInMonth) day = daysInMonth
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        TextField(
+            value = day.toString(),
+            onValueChange = {
+                val num = it.toIntOrNull()
+                if (num != null && num in 1..daysInMonth) {
+                    day = num
+                }
+            },
+            label = { Text("Day (1–$daysInMonth)") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        TextField(
+            value = content,
+            onValueChange = { content = it },
+            label = { Text("Event Content") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(24.dp))
+
+        Button(onClick = {
+            val updatedEvent = event.copy(
+                content = content,
+                month = selectedMonthIndex + 1,
+                day = day
+            )
+            viewModel.viewModelScope.launch {
+                viewModel.updateEvent(updatedEvent)
+                navController.popBackStack()
+            }
+        }) {
+            Text("Save Changes")
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        Button(onClick = {
+            viewModel.viewModelScope.launch {
+                viewModel.deleteEvent(event)
+                navController.popBackStack()
+            }
+        }) {
+            Text("Delete Event")
+        }
+    }
+}
+
+
+
+
