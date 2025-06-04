@@ -67,14 +67,14 @@ fun BottomNavigation(navController: NavHostController, eventViewModel: EventView
         composable("E3/{index}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")
             if (index != null) {
-                E3(index,navController,eventViewModel)// Wydarzenia miesiąca
+                E3(index,navController,eventViewModelR)// Wydarzenia miesiąca
             }
         }
         composable("E4/{index}/{indexm}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")
             val indexm = backStackEntry.arguments?.getString("indexm")
             if (index != null && indexm != null) {
-                E4(navController,index,indexm,eventViewModel)// Szczegóły dnia
+                E4(navController,index,indexm,eventViewModelR)// Szczegóły dnia
             }
         }
     }

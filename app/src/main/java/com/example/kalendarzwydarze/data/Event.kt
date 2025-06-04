@@ -31,6 +31,10 @@ interface EventDao {
 
     @Delete
     suspend fun deleteEvent(event: EventR)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(events: List<EventR>)
+
 }
 
 class EventRepository(private val dao: EventDao) {
@@ -38,6 +42,23 @@ class EventRepository(private val dao: EventDao) {
     suspend fun insertEvent(event: EventR) = dao.insertEvent(event)
     suspend fun updateEvent(event: EventR) = dao.updateEvent(event)
     suspend fun deleteEvent(event: EventR) = dao.deleteEvent(event)
+    suspend fun insertInitialEvents() {
+        val predefined = listOf(
+            EventR(content = "Nowy Rok", month = 1, day = 1),
+            EventR(content = "Święto Trzech Króli", month = 1, day = 6),
+            EventR(content = "Święto Pracy", month = 5, day = 1),
+            EventR(content = "Święto Komuny", month = 5, day = 1),
+            EventR(content = "Święto Konstytucji 3 Maja", month = 5, day = 3),
+            EventR(content = "Wniebowzięcie NMP", month = 8, day = 15),
+            EventR(content = "Wszystkich Świętych", month = 11, day = 1),
+            EventR(content = "Święto Niepodległości", month = 11, day = 11),
+            EventR(content = "Boże Narodzenie", month = 12, day = 25),
+            EventR(content = "Drugi dzień Bożego Narodzenia", month = 12, day = 26)
+        )
+        dao.insertAll(predefined)
+    }
+
+
 }
 
 class EventViewModelR(private val repository: EventRepository) : ViewModel() {
@@ -46,8 +67,14 @@ class EventViewModelR(private val repository: EventRepository) : ViewModel() {
     var selectedEvent: EventR? = null
 
     init {
-        loadEvents()
+        viewModelScope.launch {
+            if (repository.getAllEvents().isEmpty()) {
+                repository.insertInitialEvents()
+            }
+            loadEvents()
+        }
     }
+
 
     fun loadEvents() {
         viewModelScope.launch {

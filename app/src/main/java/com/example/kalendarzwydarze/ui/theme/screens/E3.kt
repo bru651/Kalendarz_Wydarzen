@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,17 +22,19 @@ import androidx.navigation.NavHostController
 //import com.example.kalendarzwydarze.data.EventProvider
 import com.example.kalendarzwydarze.data.EventViewModel
 import com.example.kalendarzwydarze.data.Event
+import com.example.kalendarzwydarze.data.EventViewModelR
 import java.time.LocalDate
 
 // Wydarzenia miesiąca
 @Composable
-fun E3(indexPassed: String, navController: NavHostController,eventViewModel: EventViewModel) {
+fun E3(indexPassed: String, navController: NavHostController,eventViewModel: EventViewModelR) {
     val indexint = indexPassed.toInt()
     val currentDate = LocalDate.now()
     val cday = currentDate.dayOfMonth
     val cmonth = currentDate.monthValue
     val cyear = currentDate.year
-    val events = eventViewModel.eventList.filter { it.month == (indexint + 1) }
+    val eventsT by eventViewModel.events.observeAsState(emptyList())
+    val events = eventsT.filter { it.month == (indexint + 1) }
     val monthDays = if (cyear % 4 == 0 && (cyear % 100 != 0 || cyear % 400 == 0)) {
         // February in a leap year
         listOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
