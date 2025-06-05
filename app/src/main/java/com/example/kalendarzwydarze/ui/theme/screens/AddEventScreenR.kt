@@ -1,11 +1,14 @@
 package com.example.kalendarzwydarze.ui.theme.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -205,7 +208,9 @@ fun EditEventScreenR(navController: NavHostController, viewModel: EventViewModel
                 viewModel.deleteEvent(event)
                 navController.popBackStack()
             }
-        }) {
+        },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
             Text("Delete Event")
         }
     }

@@ -107,4 +107,7 @@ dependencies {
 
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
+
+    //val work_version = "2.10.1"
+    implementation(libs.androidx.work.runtime.ktx)
 }

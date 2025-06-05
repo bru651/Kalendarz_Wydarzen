@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -77,6 +78,7 @@ fun E3(indexPassed: String, navController: NavHostController,eventViewModel: Eve
                                     } else {
                                         Color.Yellow
                                     }
+                                    , shape = RoundedCornerShape(16.dp)
                                 )
                                 .height(80.dp)
                                 .clickable { navController.navigate("E4/$index/$indexint") }

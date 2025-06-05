@@ -307,7 +307,8 @@ fun EditGoalScreenR(
                     viewModel.deleteGoal(goalWithSubGoals.goal)
                     navController.popBackStack()
                 }
-            }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
             Text("Delete Goal")
         }

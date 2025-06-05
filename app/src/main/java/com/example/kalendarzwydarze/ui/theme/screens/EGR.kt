@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -74,11 +75,14 @@ fun EGR(navController: NavHostController, viewModel: GoalViewModelR) {
         LazyColumn(modifier = Modifier.fillMaxWidth().height(600.dp)) {
             items(sortedGoals) { goalWithSubGoals ->
                 val goal = goalWithSubGoals.goal
+                val total = goalWithSubGoals.subGoals.size
+                val done = goalWithSubGoals.subGoals.count { it.isCompleted }
+                val progress = if (total > 0) (done * 100 / total) else null
                 Box(
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxWidth()
-                        .background(Color.Yellow)
+                        .background(Color.Yellow, shape = RoundedCornerShape(16.dp))
                         .height(80.dp)
                         .clickable { viewModel.selectedGoalWithSubGoals = goalWithSubGoals
                             navController.navigate("editGoalR") }
@@ -98,6 +102,12 @@ fun EGR(navController: NavHostController, viewModel: GoalViewModelR) {
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(8.dp)
+                    )
+                    Text(
+                        text = "${progress}% done",
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(8.dp),
                     )
                 }
             }

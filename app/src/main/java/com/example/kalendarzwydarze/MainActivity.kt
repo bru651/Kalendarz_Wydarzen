@@ -14,6 +14,7 @@ import com.example.kalendarzwydarze.ui.theme.KalendarzWydarzeńTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.example.kalendarzwydarze.data.*
+import com.example.kalendarzwydarze.notifications.scheduleDailyNotificationWorker
 
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +67,7 @@ class MyApp : Application() {
         )
             .fallbackToDestructiveMigration(true)
             .build()
+        scheduleDailyNotificationWorker(applicationContext, testMode = true)
     }
 }
 

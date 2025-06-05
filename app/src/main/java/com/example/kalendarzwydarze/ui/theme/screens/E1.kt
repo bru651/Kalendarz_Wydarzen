@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ fun E1(navController: NavHostController)
         ) {
 
             items(12) { index ->
-                Box(modifier = Modifier.padding(5.dp).fillMaxWidth().background(Color.Yellow).height(80.dp).clickable {
+                Box(modifier = Modifier.padding(5.dp).fillMaxWidth().background(Color.Yellow, shape = RoundedCornerShape(16.dp)).height(80.dp).clickable {
                             navController.navigate("E3/$index") }
 
                 ) {

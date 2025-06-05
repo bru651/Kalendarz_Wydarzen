@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,7 +60,7 @@ fun E4(
                     modifier = Modifier
                         .padding(5.dp)
                         .fillMaxWidth()
-                        .background(Color.Yellow)
+                        .background(Color.Yellow, shape = RoundedCornerShape(16.dp))
                         .height(80.dp)
                         .clickable {
                             eventViewModel.selectedEvent = event
